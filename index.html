@@ -17,27 +17,29 @@ updated by JL on November 7, 2021 at 9:25 PM
      <meta charset="utf-8">
      <title>Multiplication Table</title>
      <link rel="stylesheet" href="css/style.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.js"></script>
  </head>
  <body>
      <h1> Interactive Multiplication Table </h1>
-     <form class="inputs">
+     <form id="inputs">
          <table id="userInput">
              <tr>
                  <td id="minColText">Minimum Column Value:</td>
-                 <td><input type="number" id="minCol"></td>
+                 <td><input type="text" name="minCol" id="minCol" required></td>
              </tr>
              <tr>
                  <td id="maxColText">Maximum Column Value:</td>
-                 <td><input type="number" id="maxCol"></td>
+                 <td><input type="text" name="maxCol" id="maxCol" required></td>
              </tr>
 
              <tr>
                  <td id="minRowText">Minimum Row Value:</td>
-                 <td><input type="number" id="minRow"></td>
+                 <td><input type="text" name="minRow" id="minRow" required></td>
              </tr>
              <tr>
                  <td id="maxRowText">Maximum Row Value:</td>
-                 <td><input type="number" id="maxRow"></td>
+                 <td><input type="text" name="maxRow" id="maxRow" required></td>
              </tr>
 
              <tr>
@@ -45,10 +47,10 @@ updated by JL on November 7, 2021 at 9:25 PM
              </tr>
          </table>
      </form>
+     <div id="infotext">
+     </div>
      <div id="table">
      </div>
      <script src="js/hw4.js"></script>
-     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.js"></script>
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
  </body>
 </html>
