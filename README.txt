@@ -1,5 +1,5 @@
 Name: Jacob Leboeuf
 
-URL: https://jacobleboeuf.github.io/GUI-Assignment4/index.html
+URL: https://jacobleboeuf.github.io/GUI-Assignment4Part1/index.html
 
-Repository: https://github.com/jacobleboeuf/GUI-Assignment4
+Repository: https://github.com/jacobleboeuf/GUI-Assignment4Part1
