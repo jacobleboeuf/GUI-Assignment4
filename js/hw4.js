@@ -22,25 +22,6 @@ const maxRowText = document.getElementById("maxRowText");
 const table = document.getElementById("table");
 var minCol, maxCol, minRow, maxRow;
 /**
-  * This function checks if the values inputted within the form
-  * are numbers, and converts math symbols, such as pi and e, into
-  * their respective whole number values
-  *
-  * @param {string} value - input being checked
-  *
-  * @return {int} - Whole number equivalent for table
-**/
-function checkForMathVars(value) {
-    if (isNaN(value) && (value == "e" || value == "pi")) {
-        value = 3;
-    } else if (isNaN(value) && (value == "-e" || value == "-pi")) {
-        value = -3;
-    } else if (!isNaN(value)) {
-        return Math.round(value);
-    }
-    return value;
-}
-/**
   * This function creates an HTML table element, fills the tabke
   * with accurate Multiplication table values based off of the
   * parameters given, and returns the filled HTML table element
@@ -81,32 +62,113 @@ function createTable(minCol, maxCol, minRow, maxRow) {
   * where/how the inputs are invalid, or generate and display
   * a Multiplication table based upon valid inputs.
   *
-**/
-inputs.addEventListener('submit',(e) => {
-    e.preventDefault();
-    minCol = checkForMathVars(document.getElementById("minCol").value);
-    maxCol = checkForMathVars(document.getElementById("maxCol").value);
-    minRow = checkForMathVars(document.getElementById("minRow").value);
-    maxRow = checkForMathVars(document.getElementById("maxRow").value);
-    if (isNaN(minCol)) {
-        infotext.innerHTML = "<p>Minimum Column Value is not a number!</p>";
-    } else if (isNaN(maxCol)) {
-        infotext.innerHTML = "<p>Maximum Column Value is not a number!</p>";
-    } else if (isNaN(minRow)) {
-        infotext.innerHTML = "<p>Minimum Row Value is not a number!</p>";
-    } else if (isNaN(maxRow)) {
-        infotext.innerHTML = "<p>Maximum Row Value is not a number!</p>";
-    } else if (minCol > maxCol) {
-        infotext.innerHTML = "<p>Minimum Column Value cannot be greater than the Maximum Column Value!</p>";
-    } else if (minRow > maxRow) {
-        infotext.innerHTML = "<p>Minimum Row Value cannot be greater than the Maximum Row Value!</p>";
-    } else if ((maxCol - minCol) > 200) {
-        infotext.innerHTML = "<p>Column range cannot exceed 200 between minimum and maximum values!<\p>";
-    } else if ((maxRow - minRow) > 200) {
-        infotext.innerHTML = "<p>Row range cannot exceed 200 between minimum and maximum values!<\p>";
-    } else {
-        infotext.innerHTML = "<p>Decimal numbers are rounded to whole numbers.</p>";
-        infotext.innerHTML += "<p>Mathematical symbols 'e' and 'pi' are rounded to 3.</p>";
-        table.innerHTML = createTable(minCol, maxCol, minRow, maxRow);
-    }
+*/
+$(function() {
+    /**
+      * Validator compare() function
+      * - Throws error message if minimum column/row value
+      *   is larger than maximum column/row value
+    */
+    jQuery.validator.addMethod("compare", function(value, element, params) {
+          var n1 = parseInt(value);
+          var n2 = parseInt($('input[name="' + params[0] +'"]').val());
+          if (isNaN(n1) || isNaN(n2)) {
+              return true;
+          }
+          if (params[2]) {
+              return n1 <= n2;
+          } else {
+              return n1 >= n2;
+          }
+    }, "<p>Mininum {1} value must be <= Maximum {1} value!</p>");
+    /**
+      * Validator checkRange() function
+      * - Throws error message if column/row value
+      *   range exceeds 200
+    */
+    jQuery.validator.addMethod("checkRange", function(value, element, params) {
+          var n1 = parseInt(value);
+          var n2 = parseInt($('input[name="' + params[0] +'"]').val());
+          if (isNaN(n1) || isNaN(n2)) {
+              return true;
+          }
+          if (params[2]) {
+              return Math.abs(n2 - n1) <= 200;
+          } else {
+              return Math.abs(n1 - n2) <= 200;
+          }
+    },"<p>{1} range cannot exceed 200</p><p>between minimum and maximum values!</p>");
+    /**
+     * JQuery validation function:
+     * - Throws error messages if user enters invalid inputs
+     * - Creates the Multiplication table upon valid inputs
+    */
+    $("#inputs").validate({
+        rules: {
+            minCol : {
+                required: true,
+                number: true,
+                compare: ['maxCol', 'Column', true],
+                checkRange: ['maxCol', 'Column', true]
+            },
+            maxCol : {
+                required: true,
+                number: true,
+                compare: ['minCol', 'Column', false],
+                checkRange: ['minCol', 'Column', false]
+            },
+            minRow : {
+                required: true,
+                number: true,
+                compare: ['maxRow', 'Row', true],
+                checkRange: ['maxRow', 'Row', true]
+            },
+            maxRow : {
+                required: true,
+                number: true,
+                compare: ['minRow', 'Row', false],
+                checkRange: ['minRow', 'Row', false]
+            }
+        },
+        messages: {
+            minCol: {
+                required: "<p>Please enter a number</p>",
+                number: "<p>Value must be a number</p><p>No letters or Mathematical symbols allowed</p>"
+            },
+            maxCol: {
+                required: "<p>Please enter a number</p>",
+                number: "<p>Value must be a number</p><p>No letters or Mathematical symbols allowed</p>"
+            },
+            minRow: {
+                required: "<p>Please enter a number</p>",
+                number: "<p>Value must be a number</p><p>No letters or Mathematical symbols allowed</p>"
+            },
+            maxRow: {
+                required: "<p>Please enter a number</p>",
+                number: "<p>Value must be a number</p><p>No letters or Mathematical symbols allowed</p>"
+            }
+        },
+        // Places error messages in desired places
+        errorPlacement: function(error, element) {
+            if (element.attr("name") == "minCol") {
+                error.appendTo($("#minColText"));
+            } else if (element.attr("name") == "maxCol") {
+                error.appendTo($("#maxColText"));
+            } else if (element.attr("name") == "minRow") {
+                error.appendTo($("#minRowText"));
+            } else if (element.attr("name") == "maxRow") {
+                error.appendTo($("#maxRowText"));
+            }
+        },
+        // Rounds decimal values and calls createTable function
+        submitHandler: function(form, e) {
+            e.preventDefault();
+            minCol = Math.round(document.getElementById("minCol").value);
+            maxCol = Math.round(document.getElementById("maxCol").value);
+            minRow = Math.round(document.getElementById("minRow").value);
+            maxRow = Math.round(document.getElementById("maxRow").value);
+            infotext.innerHTML = "<p>Decimal numbers are rounded to whole numbers.</p>";
+            table.innerHTML = createTable(minCol, maxCol, minRow, maxRow);
+        }
+    })
 });
