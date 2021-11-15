@@ -46,10 +46,14 @@ button {
 #table td, #table th {
     min-width: 30px;
 }
-#minColText, #maxColText, #minRowText, #maxRowText {
+#userInput {
+    font-weight: bold;
+}
+#minColText p, #maxColText p, #minRowText p, #maxRowText p, #infotext {
     font-weight: bold;
     color: red;
     overflow: hidden;
+    margin: 0;
 }
 #table tr:nth-child(odd) td:nth-child(even) {
     background-color: pink;
